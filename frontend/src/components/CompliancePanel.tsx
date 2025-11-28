@@ -186,6 +186,7 @@ export default function CompliancePanel({
             <tr>
               <th className="px-3 py-2 text-left font-medium text-gray-600 w-10">Status</th>
               <th className="px-3 py-2 text-left font-medium text-gray-600">Check</th>
+              <th className="px-3 py-2 text-left font-medium text-gray-600 w-16">Source</th>
               <th className="px-3 py-2 text-left font-medium text-gray-600 w-20">Confidence</th>
             </tr>
           </thead>
@@ -221,6 +222,18 @@ export default function CompliancePanel({
                         Found: {result.found_value}
                       </div>
                     ) : null}
+                  </td>
+                  <td className="px-3 py-2">
+                    {!isPending && hasChunks ? (
+                      <span className="inline-flex items-center gap-1 text-xs text-blue-600 font-medium">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                        </svg>
+                        {result.chunk_ids.length}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400">—</span>
+                    )}
                   </td>
                   <td className="px-3 py-2 text-gray-500">
                     {isPending ? '—' : result.confidence > 0 ? `${result.confidence}%` : '—'}
@@ -281,16 +294,40 @@ export default function CompliancePanel({
 
         {relevantChunks.length > 0 && (
           <div className="mt-3 pt-3 border-t border-gray-200">
-            <p className="text-xs text-gray-500 mb-2">Source components ({relevantChunks.length}):</p>
-            <div className="space-y-2 max-h-32 overflow-auto">
-              {relevantChunks.map((chunk) => (
-                <div
-                  key={chunk.id}
-                  className="bg-white p-2 rounded border text-xs text-gray-700 line-clamp-3"
-                >
-                  {chunk.markdown}
-                </div>
-              ))}
+            <p className="text-xs text-gray-500 mb-2">
+              Source components ({relevantChunks.length}) — click to view in document:
+            </p>
+            <div className="space-y-2 max-h-40 overflow-auto">
+              {relevantChunks.map((chunk) => {
+                const pageNum = chunk.grounding?.page !== undefined ? chunk.grounding.page + 1 : null;
+                return (
+                  <div
+                    key={chunk.id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onChunkSelect([chunk.id], pageNum || undefined);
+                    }}
+                    className="bg-white p-2 rounded border text-xs text-gray-700 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors group"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="line-clamp-2 flex-1">{chunk.markdown}</span>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        {pageNum && (
+                          <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded group-hover:bg-blue-100 group-hover:text-blue-600">
+                            p.{pageNum}
+                          </span>
+                        )}
+                        <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded capitalize group-hover:bg-blue-100 group-hover:text-blue-600">
+                          {chunk.type}
+                        </span>
+                        <svg className="w-3 h-3 text-gray-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

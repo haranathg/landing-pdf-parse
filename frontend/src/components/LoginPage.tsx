@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { validateAccessKey, setAuthenticated } from '../utils/auth';
 import bundabergLogo from '../assets/bundaberg.jpeg';
+import urbancompassLogo from '../assets/urbancompass.jpg';
 
 interface LoginPageProps {
   onAuthenticated: () => void;
@@ -35,8 +36,8 @@ export default function LoginPage({ onAuthenticated }: LoginPageProps) {
         <div className="flex flex-col items-center mb-8">
           <img
             src={bundabergLogo}
-            alt="Logo"
-            className="w-24 h-24 object-contain rounded-lg mb-4"
+            alt="Bundaberg Logo"
+            className="w-56 h-56 object-contain rounded-lg mb-4"
           />
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-800">
@@ -105,10 +106,24 @@ export default function LoginPage({ onAuthenticated }: LoginPageProps) {
 
         {/* Footer */}
         <div className="mt-8 pt-6 border-t text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <p className="text-xs text-gray-400">
+              Powered by CompliCheck<span className="text-green-600 font-medium">AI</span>™ from
+            </p>
+            <a
+              href="https://urbancompass.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:opacity-80 transition-opacity"
+            >
+              <img
+                src={urbancompassLogo}
+                alt="UrbanCompass"
+                className="h-5 object-contain"
+              />
+            </a>
+          </div>
           <p className="text-xs text-gray-400">
-            Powered by CompliCheck<span className="text-green-600 font-medium">AI</span>™ from UrbanCompass
-          </p>
-          <p className="text-xs text-gray-400 mt-1">
             Need access? Contact your administrator.
           </p>
         </div>
