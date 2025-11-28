@@ -35,8 +35,8 @@ export default function ChunkOverlay({
         width: `${width}px`,
         height: `${height}px`,
         backgroundColor: color,
-        border: isSelected ? '2px solid #3b82f6' : '1px solid rgba(0,0,0,0.2)',
-        boxShadow: isSelected ? '0 0 0 2px rgba(59, 130, 246, 0.3)' : 'none',
+        border: isSelected ? '3px solid #f97316' : '1px solid rgba(0,0,0,0.2)',
+        boxShadow: isSelected ? '0 0 0 4px rgba(249, 115, 22, 0.4), 0 0 12px rgba(249, 115, 22, 0.6)' : 'none',
       }}
       onClick={onClick}
       title={`${chunk.type}: ${chunk.markdown.substring(0, 100)}...`}

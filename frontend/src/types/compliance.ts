@@ -20,7 +20,7 @@ export interface CheckResult {
   check_id: string;
   check_name: string;
   check_type: 'completeness' | 'compliance';
-  status: 'pass' | 'fail' | 'needs_review';
+  status: 'pass' | 'fail' | 'needs_review' | 'na';
   confidence: number;
   found_value: string | null;
   expected: string | null;
@@ -41,6 +41,7 @@ export interface ComplianceReport {
     passed: number;
     failed: number;
     needs_review: number;
+    na: number;
   };
 }
 

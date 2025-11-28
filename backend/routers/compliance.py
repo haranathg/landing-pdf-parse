@@ -70,7 +70,7 @@ COMPLIANCE CHECKS TO EVALUATE:
 {compliance_list}
 
 For each check, determine:
-- status: "pass" (found and meets criteria), "fail" (not found or doesn't meet criteria), or "needs_review" (found but unclear/needs human verification)
+- status: "pass" (found and meets criteria), "fail" (not found or doesn't meet criteria), "needs_review" (found but unclear/needs human verification), or "na" (not applicable to this document type)
 - confidence: 0-100 (how confident you are in the assessment)
 - found_value: the actual value/text found in the document (if any)
 - notes: brief explanation of your finding
@@ -81,6 +81,7 @@ IMPORTANT:
 2. For pass/needs_review, ALWAYS include chunk_ids where the information was found
 3. If you find partial information, mark as needs_review
 4. Be conservative - if uncertain, use needs_review rather than pass
+5. Use "na" when a check doesn't apply to this document type (e.g., parking requirements for a small residential project)
 
 Respond ONLY with valid JSON in this exact format:
 {{
@@ -183,9 +184,12 @@ Respond ONLY with valid JSON in this exact format:
         passed = sum(1 for r in all_results if r["status"] == "pass")
         failed = sum(1 for r in all_results if r["status"] == "fail")
         needs_review = sum(1 for r in all_results if r["status"] == "needs_review")
+        na = sum(1 for r in all_results if r["status"] == "na")
 
-        completeness_passed = sum(1 for r in completeness_results if r["status"] in ["pass", "needs_review"])
-        completeness_score = int((completeness_passed / len(completeness_results)) * 100) if completeness_results else 0
+        # For completeness score, exclude NA items
+        applicable_completeness = [r for r in completeness_results if r["status"] != "na"]
+        completeness_passed = sum(1 for r in applicable_completeness if r["status"] in ["pass", "needs_review"])
+        completeness_score = int((completeness_passed / len(applicable_completeness)) * 100) if applicable_completeness else 0
 
         return {
             "document_name": "Uploaded Document",
@@ -199,6 +203,7 @@ Respond ONLY with valid JSON in this exact format:
                 "passed": passed,
                 "failed": failed,
                 "needs_review": needs_review,
+                "na": na,
             }
         }
 

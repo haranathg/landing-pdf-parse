@@ -14,6 +14,7 @@ interface PDFViewerProps {
   selectedChunk: Chunk | null;
   onChunkClick: (chunk: Chunk) => void;
   onPdfReady?: () => void;
+  targetPage?: number;
 }
 
 export default function PDFViewer({
@@ -22,6 +23,7 @@ export default function PDFViewer({
   selectedChunk,
   onChunkClick,
   onPdfReady,
+  targetPage,
 }: PDFViewerProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,6 +33,7 @@ export default function PDFViewer({
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [, setIsPageLoading] = useState(true);
   const [fileKey, setFileKey] = useState(0);
+  const [lastTargetPage, setLastTargetPage] = useState<number | undefined>(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Reset state when file changes
@@ -56,6 +59,37 @@ export default function PDFViewer({
     window.addEventListener('resize', updateWidth);
     return () => window.removeEventListener('resize', updateWidth);
   }, [file]);
+
+  // Navigate to target page when it changes (only when targetPage actually changes)
+  useEffect(() => {
+    if (targetPage && targetPage >= 1 && targetPage <= numPages && targetPage !== lastTargetPage) {
+      setLastTargetPage(targetPage);
+      if (targetPage !== currentPage) {
+        setPageSize({ width: 0, height: 0 });
+        setCurrentPage(targetPage);
+      }
+    }
+  }, [targetPage, numPages, lastTargetPage, currentPage]);
+
+  // Scroll to selected chunk when it changes
+  useEffect(() => {
+    if (selectedChunk && selectedChunk.grounding && containerRef.current && pageSize.height > 0) {
+      // Calculate the chunk's position on the page
+      const chunkTop = selectedChunk.grounding.box.top * pageSize.height;
+      const chunkBottom = selectedChunk.grounding.box.bottom * pageSize.height;
+      const chunkCenter = (chunkTop + chunkBottom) / 2;
+
+      // Get the container's visible height
+      const containerHeight = containerRef.current.clientHeight;
+
+      // Scroll to center the chunk in view
+      const scrollTarget = chunkCenter - (containerHeight / 2) + 60; // +60 for padding/header
+      containerRef.current.scrollTo({
+        top: Math.max(0, scrollTarget),
+        behavior: 'smooth'
+      });
+    }
+  }, [selectedChunk, pageSize]);
 
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
     console.log('PDF document loaded, pages:', numPages);
@@ -232,7 +266,7 @@ export default function PDFViewer({
 
       {/* Legend */}
       <div className="bg-white border-t px-4 py-2 flex flex-wrap gap-3 text-xs">
-        <span className="text-gray-500 font-medium">Chunk types:</span>
+        <span className="text-gray-500 font-medium">Component types:</span>
         {['text', 'table', 'figure', 'title', 'caption', 'form_field'].map((type) => (
           <span key={type} className="flex items-center gap-1">
             <span

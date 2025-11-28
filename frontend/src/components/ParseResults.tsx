@@ -7,19 +7,21 @@ interface ParseResultsProps {
   highlightedChunk: Chunk | null;
   popupChunk: Chunk | null;
   onPopupOpen: (chunk: Chunk | null) => void;
+  onChunkSelect: (chunk: Chunk) => void;
   isLoading: boolean;
 }
 
-type ViewMode = 'markdown' | 'chunks';
+type ViewMode = 'markdown' | 'components';
 
 export default function ParseResults({
   result,
   highlightedChunk,
   popupChunk,
   onPopupOpen,
+  onChunkSelect,
   isLoading,
 }: ParseResultsProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>('chunks');
+  const [viewMode, setViewMode] = useState<ViewMode>('components');
   const [filter, setFilter] = useState<string>('all');
   const chunkRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
@@ -80,7 +82,7 @@ export default function ParseResults({
             <span className="ml-2 font-medium">{result.metadata.page_count || 'N/A'}</span>
           </div>
           <div>
-            <span className="text-gray-500">Chunks:</span>
+            <span className="text-gray-500">Components:</span>
             <span className="ml-2 font-medium">{result.chunks.length}</span>
           </div>
           <div>
@@ -94,14 +96,14 @@ export default function ParseResults({
       <div className="flex items-center gap-4 mb-4">
         <div className="flex bg-gray-100 rounded-lg p-1">
           <button
-            onClick={() => setViewMode('chunks')}
+            onClick={() => setViewMode('components')}
             className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-              viewMode === 'chunks'
+              viewMode === 'components'
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Chunks
+            Components
           </button>
           <button
             onClick={() => setViewMode('markdown')}
@@ -115,7 +117,7 @@ export default function ParseResults({
           </button>
         </div>
 
-        {viewMode === 'chunks' && (
+        {viewMode === 'components' && (
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -151,11 +153,12 @@ export default function ParseResults({
                       chunkRefs.current.set(chunk.id, el);
                     }
                   }}
+                  onClick={() => onChunkSelect(chunk)}
                   className={`
-                    p-3 rounded-lg border transition-all
+                    p-3 rounded-lg border transition-all cursor-pointer hover:shadow-md
                     ${highlightedChunk?.id === chunk.id
-                      ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
-                      : 'border-gray-200 bg-white'
+                      ? 'border-orange-500 bg-orange-50 ring-2 ring-orange-300 border-2'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
                     }
                   `}
                 >

@@ -7,7 +7,9 @@ import ExtractPanel from './components/ExtractPanel';
 import ChatPanel from './components/ChatPanel';
 import CompliancePanel from './components/CompliancePanel';
 import type { ParseResponse, Chunk, TabType } from './types/ade';
+import type { ComplianceReport } from './types/compliance';
 import { API_URL } from './config';
+import bundabergLogo from './assets/bundaberg.jpeg';
 
 function App() {
   const [file, setFile] = useState<File | null>(null);
@@ -17,6 +19,8 @@ function App() {
   const [activeTab, setActiveTab] = useState<TabType>('parse');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [complianceReport, setComplianceReport] = useState<ComplianceReport | null>(null);
+  const [targetPage, setTargetPage] = useState<number | undefined>(undefined);
 
   const [isPdfReady, setIsPdfReady] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -33,6 +37,8 @@ function App() {
     setPopupChunk(null);
     setIsPdfReady(false);
     setIsLoading(false);
+    setComplianceReport(null);
+    setTargetPage(undefined);
   };
 
   const handlePdfReady = () => {
@@ -102,14 +108,17 @@ function App() {
       <header className="bg-white shadow-sm border-b px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+            <img
+              src={bundabergLogo}
+              alt="Bundaberg Logo"
+              className="w-[100px] h-[100px] object-contain rounded"
+            />
+            <div className="flex flex-col">
+              <span className="text-xl font-semibold text-gray-700 leading-tight">Doc Scan Studio</span>
+              <h1 className="text-sm font-bold text-gray-800 leading-tight">
+                CompliCheck<span className="text-green-600">AI</span><span className="text-[10px] align-super">™</span>
+              </h1>
             </div>
-            <h1 className="text-xl font-semibold text-gray-800">
-              CompliCheckAI™ Doc Scan Studio
-            </h1>
           </div>
           <div className="flex items-center gap-4">
             {file && (
@@ -175,6 +184,7 @@ function App() {
               selectedChunk={highlightedChunk}
               onChunkClick={handleChunkClick}
               onPdfReady={handlePdfReady}
+              targetPage={targetPage}
             />
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-gray-400">
@@ -202,6 +212,13 @@ function App() {
                 highlightedChunk={highlightedChunk}
                 popupChunk={popupChunk}
                 onPopupOpen={setPopupChunk}
+                onChunkSelect={(chunk) => {
+                  setHighlightedChunk(highlightedChunk?.id === chunk.id ? null : chunk);
+                  // Navigate to the chunk's page
+                  if (chunk.grounding) {
+                    setTargetPage(chunk.grounding.page + 1);
+                  }
+                }}
                 isLoading={isLoading}
               />
             )}
@@ -223,10 +240,15 @@ function App() {
                 markdown={parseResult?.markdown || ''}
                 chunks={parseResult?.chunks || []}
                 disabled={!parseResult}
-                onChunkSelect={(chunkIds) => {
+                report={complianceReport}
+                onReportChange={setComplianceReport}
+                onChunkSelect={(chunkIds, pageNumber) => {
                   const chunk = parseResult?.chunks.find(c => chunkIds.includes(c.id));
                   if (chunk) {
                     setHighlightedChunk(chunk);
+                    if (pageNumber) {
+                      setTargetPage(pageNumber);
+                    }
                   }
                 }}
               />
@@ -237,10 +259,10 @@ function App() {
 
       {/* Footer */}
       <footer className="bg-white border-t px-6 py-2 text-xs text-gray-500 flex items-center justify-between">
-        <span>Powered by CompliCheckAI™ from UrbanCompass</span>
+        <span>Powered by CompliCheck<span className="text-green-600 font-medium">AI</span>™ from UrbanCompass</span>
         {parseResult && (
           <span>
-            {parseResult.chunks.length} chunks extracted
+            {parseResult.chunks.length} components extracted
             {parseResult.metadata.page_count && ` from ${parseResult.metadata.page_count} pages`}
           </span>
         )}
