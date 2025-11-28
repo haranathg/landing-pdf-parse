@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react';
 import type { ParseResponse, ExtractResponse, ChatMessage, ChatResponse, Chunk } from '../types/ade';
+import { API_URL } from '../config';
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = `${API_URL}/api`;
 
 interface SchemaField {
   name: string;

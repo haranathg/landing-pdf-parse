@@ -6,6 +6,7 @@ import ParseResults from './components/ParseResults';
 import ExtractPanel from './components/ExtractPanel';
 import ChatPanel from './components/ChatPanel';
 import type { ParseResponse, Chunk, TabType } from './types/ade';
+import { API_URL } from './config';
 
 function App() {
   const [file, setFile] = useState<File | null>(null);
@@ -59,7 +60,7 @@ function App() {
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://localhost:8000/api/parse', {
+      const response = await fetch(`${API_URL}/api/parse`, {
         method: 'POST',
         body: formData,
         signal: abortControllerRef.current.signal,

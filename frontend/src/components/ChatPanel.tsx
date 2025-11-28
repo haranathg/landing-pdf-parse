@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Chunk, ChatMessage } from '../types/ade';
+import { API_URL } from '../config';
 
 interface ChatPanelProps {
   markdown: string;
@@ -33,7 +34,7 @@ export default function ChatPanel({ markdown, chunks, disabled }: ChatPanelProps
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:8000/api/chat', {
+      const response = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

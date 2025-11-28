@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_URL } from '../config';
 
 interface SchemaField {
   name: string;
@@ -90,7 +91,7 @@ export default function ExtractPanel({ markdown, disabled }: ExtractPanelProps) 
     setResult(null);
 
     try {
-      const response = await fetch('http://localhost:8000/api/extract', {
+      const response = await fetch(`${API_URL}/api/extract`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
