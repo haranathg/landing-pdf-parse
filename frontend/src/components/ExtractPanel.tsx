@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { API_URL } from '../config';
+import ModelSelector from './ModelSelector';
 
 interface SchemaField {
   name: string;
@@ -11,6 +12,8 @@ interface SchemaField {
 interface ExtractPanelProps {
   markdown: string;
   disabled: boolean;
+  selectedModel: string;
+  onModelChange: (model: string) => void;
 }
 
 const PRESET_SCHEMAS = {
@@ -36,7 +39,7 @@ const PRESET_SCHEMAS = {
   ],
 };
 
-export default function ExtractPanel({ markdown, disabled }: ExtractPanelProps) {
+export default function ExtractPanel({ markdown, disabled, selectedModel, onModelChange }: ExtractPanelProps) {
   const [fields, setFields] = useState<SchemaField[]>([
     { name: '', type: 'string', description: '', required: false },
   ]);
@@ -128,6 +131,21 @@ export default function ExtractPanel({ markdown, disabled }: ExtractPanelProps) 
   return (
     <div className="h-full flex flex-col">
       <div className="flex-1 overflow-auto">
+        {/* Settings Section */}
+        <div className="mb-6 p-4 bg-gray-50 rounded-lg border">
+          <h4 className="text-sm font-medium text-gray-700 mb-3">Settings</h4>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-gray-600">AI Model:</span>
+            <ModelSelector
+              selectedModel={selectedModel}
+              onModelChange={onModelChange}
+            />
+          </div>
+          <p className="text-xs text-gray-400 mt-2">
+            Select the Claude model used for Chat and Compliance analysis
+          </p>
+        </div>
+
         {/* Preset Templates */}
         <div className="mb-4">
           <h4 className="text-sm font-medium text-gray-700 mb-2">Quick Start Templates</h4>

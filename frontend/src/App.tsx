@@ -7,7 +7,6 @@ import ExtractPanel from './components/ExtractPanel';
 import ChatPanel from './components/ChatPanel';
 import CompliancePanel from './components/CompliancePanel';
 import LoginPage from './components/LoginPage';
-import ModelSelector from './components/ModelSelector';
 import type { ParseResponse, Chunk, TabType, ChatMessage } from './types/ade';
 import type { ComplianceReport } from './types/compliance';
 import { API_URL } from './config';
@@ -141,10 +140,6 @@ function App() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <ModelSelector
-              selectedModel={selectedModel}
-              onModelChange={setSelectedModel}
-            />
             {file && (
               <span className="text-sm text-gray-500">
                 {file.name}
@@ -259,6 +254,8 @@ function App() {
               <ExtractPanel
                 markdown={parseResult?.markdown || ''}
                 disabled={!parseResult}
+                selectedModel={selectedModel}
+                onModelChange={setSelectedModel}
               />
             )}
             {activeTab === 'chat' && (
