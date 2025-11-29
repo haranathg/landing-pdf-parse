@@ -78,12 +78,18 @@ export default function ChatPanel({ markdown, chunks, disabled, onChunkSelect, m
   };
 
   // Calculate cumulative token usage from all assistant messages
-  const totalTokens = messages.reduce((acc, msg) => {
-    if (msg.usage) {
-      return acc + msg.usage.input_tokens + msg.usage.output_tokens;
-    }
-    return acc;
-  }, 0);
+  const tokenUsage = messages.reduce(
+    (acc, msg) => {
+      if (msg.usage) {
+        return {
+          input: acc.input + msg.usage.input_tokens,
+          output: acc.output + msg.usage.output_tokens,
+        };
+      }
+      return acc;
+    },
+    { input: 0, output: 0 }
+  );
 
   const clearChat = () => {
     onMessagesChange([]);
@@ -241,9 +247,9 @@ export default function ChatPanel({ markdown, chunks, disabled, onChunkSelect, m
       </div>
 
       {/* Token usage footer */}
-      {totalTokens > 0 && (
+      {(tokenUsage.input > 0 || tokenUsage.output > 0) && (
         <div className="mt-2 text-xs text-gray-400 text-right">
-          Chat tokens: {totalTokens.toLocaleString()}
+          Chat: {tokenUsage.input.toLocaleString()} in / {tokenUsage.output.toLocaleString()} out
         </div>
       )}
     </div>

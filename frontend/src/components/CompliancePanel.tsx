@@ -503,7 +503,7 @@ export default function CompliancePanel({
             </p>
             {report.usage && (
               <span className="text-xs text-gray-400">
-                Tokens: {(report.usage.input_tokens + report.usage.output_tokens).toLocaleString()}
+                {report.usage.input_tokens.toLocaleString()} in / {report.usage.output_tokens.toLocaleString()} out
               </span>
             )}
           </div>
