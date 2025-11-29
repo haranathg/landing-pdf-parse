@@ -1,20 +1,4 @@
 // Simple hash function for access key validation
-// Keys are hashed using SHA-256 for security
-
-// Pre-generated hashes for valid access keys
-// To generate a new hash, use: await hashKey('your-secret-key')
-const VALID_KEY_HASHES = [
-  // Key: "bundaberg2024" -> hash below
-  '8f14e45fceea167a5a36dedd4bea2543',
-  // Key: "complicheck-demo" -> hash below
-  'a3c65c2974b89b8bdc5a8e6d67a92f5e',
-  // Key: "urbancompass-preview" -> hash below
-  'b2d5a8c9e1f3b7d4a6c8e0f2b4d6a8c0',
-  // Key: "docscan-beta-2024" -> hash below
-  'c4e6f8a0b2d4e6f8a0b2d4e6f8a0b2d4',
-  // Key: "cog-test-key" -> hash below
-  'd5f7a9b1c3e5f7a9b1c3e5f7a9b1c3e5',
-];
 
 // Simple string hash (not cryptographically secure, but good enough for demo access control)
 function simpleHash(str: string): string {
