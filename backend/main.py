@@ -10,10 +10,12 @@ load_dotenv()
 app = FastAPI(title="Landing.AI ADE Application")
 
 # CORS configuration - allow frontend origins
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173").split(",")
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173,https://complicheckai.onrender.com,https://complicheckai-frontend.onrender.com").split(",")
+# Also allow all origins in development/testing
+allow_all = os.getenv("CORS_ALLOW_ALL", "false").lower() == "true"
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=["*"] if allow_all else allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
