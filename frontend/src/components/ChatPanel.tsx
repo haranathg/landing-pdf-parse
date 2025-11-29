@@ -3,14 +3,19 @@ import ReactMarkdown from 'react-markdown';
 import type { Chunk, ChatMessage } from '../types/ade';
 import { API_URL } from '../config';
 
+interface ExtendedChatMessage extends ChatMessage {
+  chunk_ids?: string[];
+}
+
 interface ChatPanelProps {
   markdown: string;
   chunks: Chunk[];
   disabled: boolean;
+  onChunkSelect: (chunkIds: string[], pageNumber?: number) => void;
 }
 
-export default function ChatPanel({ markdown, chunks, disabled }: ChatPanelProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+export default function ChatPanel({ markdown, chunks, disabled, onChunkSelect }: ChatPanelProps) {
+  const [messages, setMessages] = useState<ExtendedChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +32,7 @@ export default function ChatPanel({ markdown, chunks, disabled }: ChatPanelProps
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
 
-    const userMessage: ChatMessage = { role: 'user', content: input };
+    const userMessage: ExtendedChatMessage = { role: 'user', content: input };
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
@@ -51,7 +56,11 @@ export default function ChatPanel({ markdown, chunks, disabled }: ChatPanelProps
       }
 
       const data = await response.json();
-      const assistantMessage: ChatMessage = { role: 'assistant', content: data.answer };
+      const assistantMessage: ExtendedChatMessage = {
+        role: 'assistant',
+        content: data.answer,
+        chunk_ids: data.chunk_ids || []
+      };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -125,28 +134,61 @@ export default function ChatPanel({ markdown, chunks, disabled }: ChatPanelProps
             </div>
           </div>
         ) : (
-          messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
+          messages.map((msg, i) => {
+            const relevantChunks = msg.chunk_ids
+              ? chunks.filter(c => msg.chunk_ids?.includes(c.id))
+              : [];
+
+            return (
               <div
-                className={`max-w-[80%] p-3 rounded-lg ${
-                  msg.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-800'
-                }`}
+                key={i}
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                {msg.role === 'assistant' ? (
-                  <div className="prose prose-sm max-w-none">
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
-                  </div>
-                ) : (
-                  <p>{msg.content}</p>
-                )}
+                <div
+                  className={`max-w-[85%] p-3 rounded-lg ${
+                    msg.role === 'user'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}
+                >
+                  {msg.role === 'assistant' ? (
+                    <>
+                      <div className="prose prose-sm max-w-none">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                      {relevantChunks.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                          <p className="text-xs text-gray-500 mb-2">
+                            Sources ({relevantChunks.length}) — click to view:
+                          </p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {relevantChunks.map((chunk) => {
+                              const pageNum = chunk.grounding?.page !== undefined ? chunk.grounding.page + 1 : null;
+                              return (
+                                <button
+                                  key={chunk.id}
+                                  onClick={() => onChunkSelect([chunk.id], pageNum || undefined)}
+                                  className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-white border rounded hover:border-blue-400 hover:bg-blue-50 transition-colors"
+                                >
+                                  {pageNum && <span className="text-gray-400">p.{pageNum}</span>}
+                                  <span className="capitalize text-gray-600">{chunk.type}</span>
+                                  <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                  </svg>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p>{msg.content}</p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
 
         {isLoading && (

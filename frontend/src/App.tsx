@@ -255,6 +255,15 @@ function App() {
                 markdown={parseResult?.markdown || ''}
                 chunks={parseResult?.chunks || []}
                 disabled={!parseResult}
+                onChunkSelect={(chunkIds, pageNumber) => {
+                  const chunk = parseResult?.chunks.find(c => chunkIds.includes(c.id));
+                  if (chunk) {
+                    setHighlightedChunk(chunk);
+                    if (pageNumber) {
+                      setTargetPage(pageNumber);
+                    }
+                  }
+                }}
               />
             )}
             {activeTab === 'compliance' && (
