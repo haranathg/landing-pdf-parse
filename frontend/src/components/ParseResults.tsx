@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type { ParseResponse, Chunk } from '../types/ade';
 import { getChunkColor } from '../utils/boundingBox';
+import { getMarkdownPreview } from '../utils/cleanMarkdown';
 
 interface ParseResultsProps {
   result: ParseResponse | null;
@@ -176,14 +177,17 @@ export default function ParseResults({
                     )}
                   </div>
                   <p className="text-sm text-gray-700 line-clamp-3">
-                    {chunk.markdown.substring(0, 200)}
+                    {getMarkdownPreview(chunk.markdown, 200)}
                     {chunk.markdown.length > 200 && (
                       <button
-                        onClick={() => onPopupOpen(chunk)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onPopupOpen(chunk);
+                        }}
                         className="text-blue-600 hover:text-blue-800 font-medium ml-1"
                         title="View full content"
                       >
-                        ...
+                        ...more
                       </button>
                     )}
                   </p>

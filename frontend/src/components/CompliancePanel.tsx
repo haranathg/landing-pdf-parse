@@ -3,6 +3,7 @@ import type { Chunk } from '../types/ade';
 import type { CheckResult, ComplianceReport, ComplianceCheck } from '../types/compliance';
 import complianceConfig from '../config/complianceChecks.json';
 import { API_URL } from '../config';
+import { getMarkdownPreview } from '../utils/cleanMarkdown';
 
 interface CompliancePanelProps {
   markdown: string;
@@ -310,7 +311,7 @@ export default function CompliancePanel({
                     className="bg-white p-2 rounded border text-xs text-gray-700 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors group"
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <span className="line-clamp-2 flex-1">{chunk.markdown}</span>
+                      <span className="line-clamp-2 flex-1">{getMarkdownPreview(chunk.markdown, 150)}</span>
                       <div className="flex items-center gap-1 flex-shrink-0">
                         {pageNum && (
                           <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded group-hover:bg-blue-100 group-hover:text-blue-600">
