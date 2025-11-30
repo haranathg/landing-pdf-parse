@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Chunk, ChatMessage } from '../types/ade';
 import { API_URL } from '../config';
-import { formatTokensWithCost } from '../utils/tokenCost';
 
 interface ChatPanelProps {
   markdown: string;
@@ -79,21 +78,6 @@ export default function ChatPanel({ markdown, chunks, disabled, onChunkSelect, m
       sendMessage();
     }
   };
-
-  // Calculate cumulative token usage from all assistant messages and track model
-  const tokenUsage = messages.reduce(
-    (acc, msg) => {
-      if (msg.usage) {
-        return {
-          input: acc.input + msg.usage.input_tokens,
-          output: acc.output + msg.usage.output_tokens,
-          model: msg.usage.model || acc.model,
-        };
-      }
-      return acc;
-    },
-    { input: 0, output: 0, model: undefined as string | undefined }
-  );
 
   const clearChat = () => {
     onMessagesChange([]);
@@ -249,19 +233,6 @@ export default function ChatPanel({ markdown, chunks, disabled, onChunkSelect, m
           </svg>
         </button>
       </div>
-
-      {/* Token usage footer */}
-      {(tokenUsage.input > 0 || tokenUsage.output > 0) && (
-        <div className="mt-2 text-xs text-gray-400 flex items-center gap-2">
-          <span>Chat: {formatTokensWithCost(tokenUsage.input, tokenUsage.output, tokenUsage.model)}</span>
-          {tokenUsage.model && (
-            <span className="text-gray-300">•</span>
-          )}
-          {tokenUsage.model && (
-            <span>{tokenUsage.model.replace('claude-', '').replace('-20250514', '')}</span>
-          )}
-        </div>
-      )}
     </div>
   );
 }

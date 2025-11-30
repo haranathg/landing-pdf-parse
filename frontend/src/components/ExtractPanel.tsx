@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { API_URL } from '../config';
 import ModelSelector from './ModelSelector';
+import { formatTokensWithCost } from '../utils/tokenCost';
 
 interface SchemaField {
   name: string;
@@ -9,11 +10,19 @@ interface SchemaField {
   required: boolean;
 }
 
+interface UsageData {
+  input_tokens: number;
+  output_tokens: number;
+  model?: string;
+}
+
 interface ExtractPanelProps {
   markdown: string;
   disabled: boolean;
   selectedModel: string;
   onModelChange: (model: string) => void;
+  chatUsage?: UsageData;
+  complianceUsage?: UsageData;
 }
 
 const PRESET_SCHEMAS = {
@@ -39,7 +48,7 @@ const PRESET_SCHEMAS = {
   ],
 };
 
-export default function ExtractPanel({ markdown, disabled, selectedModel, onModelChange }: ExtractPanelProps) {
+export default function ExtractPanel({ markdown, disabled, selectedModel, onModelChange, chatUsage, complianceUsage }: ExtractPanelProps) {
   const [fields, setFields] = useState<SchemaField[]>([
     { name: '', type: 'string', description: '', required: false },
   ]);
@@ -144,6 +153,43 @@ export default function ExtractPanel({ markdown, disabled, selectedModel, onMode
           <p className="text-xs text-gray-400 mt-2">
             Select the Claude model used for Chat and Compliance analysis
           </p>
+
+          {/* Usage Stats */}
+          {(chatUsage || complianceUsage) && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <h5 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Token Usage</h5>
+              <div className="space-y-1.5">
+                {chatUsage && chatUsage.input_tokens > 0 && (
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-gray-500">Chat:</span>
+                    <span className="text-gray-600 font-mono">
+                      {formatTokensWithCost(chatUsage.input_tokens, chatUsage.output_tokens, chatUsage.model)}
+                    </span>
+                  </div>
+                )}
+                {complianceUsage && complianceUsage.input_tokens > 0 && (
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-gray-500">Compliance:</span>
+                    <span className="text-gray-600 font-mono">
+                      {formatTokensWithCost(complianceUsage.input_tokens, complianceUsage.output_tokens, complianceUsage.model)}
+                    </span>
+                  </div>
+                )}
+                {chatUsage && complianceUsage && chatUsage.input_tokens > 0 && complianceUsage.input_tokens > 0 && (
+                  <div className="flex items-center justify-between text-xs pt-1.5 border-t border-gray-200">
+                    <span className="text-gray-600 font-medium">Total:</span>
+                    <span className="text-gray-700 font-mono font-medium">
+                      {formatTokensWithCost(
+                        chatUsage.input_tokens + complianceUsage.input_tokens,
+                        chatUsage.output_tokens + complianceUsage.output_tokens,
+                        chatUsage.model || complianceUsage.model
+                      )}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Preset Templates */}

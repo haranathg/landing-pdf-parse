@@ -256,6 +256,24 @@ function App() {
                 disabled={!parseResult}
                 selectedModel={selectedModel}
                 onModelChange={setSelectedModel}
+                chatUsage={chatMessages.reduce(
+                  (acc, msg) => {
+                    if (msg.usage) {
+                      return {
+                        input_tokens: acc.input_tokens + msg.usage.input_tokens,
+                        output_tokens: acc.output_tokens + msg.usage.output_tokens,
+                        model: msg.usage.model || acc.model,
+                      };
+                    }
+                    return acc;
+                  },
+                  { input_tokens: 0, output_tokens: 0, model: undefined as string | undefined }
+                )}
+                complianceUsage={complianceReport?.usage ? {
+                  input_tokens: complianceReport.usage.input_tokens,
+                  output_tokens: complianceReport.usage.output_tokens,
+                  model: complianceReport.usage.model,
+                } : undefined}
               />
             )}
             {activeTab === 'chat' && (
