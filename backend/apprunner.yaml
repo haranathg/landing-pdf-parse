@@ -1,0 +1,18 @@
+version: 1.0
+runtime: python311
+build:
+  commands:
+    pre-build:
+      - echo "Installing dependencies..."
+    build:
+      - pip install -r requirements.txt
+run:
+  command: uvicorn main:app --host 0.0.0.0 --port 8080
+  network:
+    port: 8080
+  env:
+    - name: ANTHROPIC_API_KEY
+      value: "${ANTHROPIC_API_KEY}"
+    - name: VISION_AGENT_API_KEY
+      value: "${VISION_AGENT_API_KEY}"
+  runtime-version: 3.11
