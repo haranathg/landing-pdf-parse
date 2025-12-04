@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { validateAccessKey, setAuthenticated } from '../utils/auth';
-import bundabergLogo from '../assets/bundaberg.jpeg';
-import urbancompassLogo from '../assets/urbancompass.jpg';
+import urbancompassLogo from '../assets/urbancompass.png';
 
 interface LoginPageProps {
   onAuthenticated: () => void;
@@ -30,39 +29,39 @@ export default function LoginPage({ onAuthenticated }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8">
+    <div className="min-h-screen bg-[#F0F5FA] flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-8 border border-[#D1D5DB]">
         {/* Logo and Header */}
         <div className="flex flex-col items-center mb-8">
           <img
-            src={bundabergLogo}
-            alt="Bundaberg Logo"
-            className="w-56 h-56 object-contain rounded-lg mb-4"
+            src={urbancompassLogo}
+            alt="UrbanCompass"
+            className="h-16 object-contain mb-6"
           />
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-800">
-              Doc Scan Studio
+            <h1 className="text-2xl font-semibold text-[#1e293b]">
+              CompliCheck<span className="text-[#046bd2]">AI</span>
             </h1>
-            <p className="text-sm font-semibold text-gray-600">
-              CompliCheck<span className="text-green-600">AI</span><span className="text-[10px] align-super">™</span>
+            <p className="text-sm text-[#334155] mt-1">
+              Document Compliance Studio
             </p>
           </div>
         </div>
 
         {/* Description */}
         <div className="text-center mb-8">
-          <p className="text-gray-600 text-sm">
+          <p className="text-[#334155] text-sm leading-relaxed">
             AI-powered document compliance checking for building consent applications.
           </p>
-          <p className="text-gray-500 text-xs mt-2">
-            This is a preview version. Enter your access key to continue.
+          <p className="text-[#9CA3AF] text-xs mt-3">
+            Enter your access key to continue.
           </p>
         </div>
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="accessKey" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="accessKey" className="block text-sm font-medium text-[#334155] mb-2">
               Access Key
             </label>
             <input
@@ -71,14 +70,14 @@ export default function LoginPage({ onAuthenticated }: LoginPageProps) {
               value={accessKey}
               onChange={(e) => setAccessKey(e.target.value)}
               placeholder="Enter your access key"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+              className="w-full px-4 py-3 border border-[#D1D5DB] rounded focus:ring-2 focus:ring-[#046bd2] focus:border-[#046bd2] outline-none transition-all text-[#1e293b] placeholder-[#9CA3AF]"
               disabled={isValidating}
               autoFocus
             />
           </div>
 
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
               {error}
             </div>
           )}
@@ -86,7 +85,7 @@ export default function LoginPage({ onAuthenticated }: LoginPageProps) {
           <button
             type="submit"
             disabled={!accessKey.trim() || isValidating}
-            className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 bg-[#046bd2] text-white rounded font-medium hover:bg-[#045cb4] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 shadow-sm"
           >
             {isValidating ? (
               <>
@@ -98,33 +97,19 @@ export default function LoginPage({ onAuthenticated }: LoginPageProps) {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                 </svg>
-                Access Preview
+                Sign In
               </>
             )}
           </button>
         </form>
 
         {/* Footer */}
-        <div className="mt-8 pt-6 border-t text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <p className="text-xs text-gray-400">
-              Powered by CompliCheck<span className="text-green-600 font-medium">AI</span>™ from
-            </p>
-            <a
-              href="https://urbancompass.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:opacity-80 transition-opacity"
-            >
-              <img
-                src={urbancompassLogo}
-                alt="UrbanCompass"
-                className="h-5 object-contain"
-              />
-            </a>
-          </div>
-          <p className="text-xs text-gray-400">
+        <div className="mt-8 pt-6 border-t border-[#D1D5DB] text-center">
+          <p className="text-xs text-[#9CA3AF]">
             Need access? Contact your administrator.
+          </p>
+          <p className="text-xs text-[#9CA3AF] mt-2">
+            Powered by <a href="https://urbancompasssoftware.com" target="_blank" rel="noopener noreferrer" className="text-[#046bd2] hover:underline">UrbanCompass</a>
           </p>
         </div>
       </div>

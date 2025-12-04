@@ -31,7 +31,7 @@ export default function FileUpload({ onUpload, isLoading }: FileUploadProps) {
       <button
         onClick={handleClick}
         disabled={isLoading}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        className="bg-[#046bd2] hover:bg-[#045cb4] text-white px-4 py-2 rounded font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
       >
         {isLoading ? (
           <>

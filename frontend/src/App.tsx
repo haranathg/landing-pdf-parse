@@ -14,7 +14,7 @@ import { API_URL } from './config';
 import { isAuthenticated, logout } from './utils/auth';
 import { getDefaultModelForParser } from './components/ModelSelector';
 import { getParserType, getModelForParser } from './components/ParserSelector';
-import bundabergLogo from './assets/bundaberg.jpeg';
+import urbancompassLogo from './assets/urbancompass.png';
 import complianceConfig from './config/complianceChecks.json';
 
 // Default model (for chat/compliance) and parser
@@ -150,26 +150,27 @@ function App() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100">
+    <div className="h-screen flex flex-col bg-[#F0F5FA]">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b px-6 py-4">
+      <header className="bg-white shadow-sm border-b border-[#D1D5DB] px-6 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <img
-              src={bundabergLogo}
-              alt="Bundaberg Logo"
-              className="w-[100px] h-[100px] object-contain rounded"
+              src={urbancompassLogo}
+              alt="UrbanCompass"
+              className="h-10 object-contain"
             />
+            <div className="h-8 w-px bg-[#D1D5DB]"></div>
             <div className="flex flex-col">
-              <span className="text-xl font-semibold text-gray-700 leading-tight">Doc Scan Studio</span>
-              <h1 className="text-sm font-bold text-gray-800 leading-tight">
-                CompliCheck<span className="text-green-600">AI</span><span className="text-[10px] align-super">™</span>
+              <h1 className="text-lg font-semibold text-[#1e293b] leading-tight">
+                CompliCheck<span className="text-[#046bd2]">AI</span>
               </h1>
+              <span className="text-xs text-[#334155]">Document Compliance Studio</span>
             </div>
           </div>
           <div className="flex items-center gap-4">
             {file && (
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-[#334155]">
                 {file.name}
               </span>
             )}
@@ -178,7 +179,7 @@ function App() {
               <button
                 onClick={handleProcess}
                 disabled={!isPdfReady}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-[#046bd2] text-white rounded hover:bg-[#045cb4] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 shadow-sm"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
@@ -190,7 +191,7 @@ function App() {
             {isLoading && (
               <button
                 onClick={handleCancel}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors flex items-center gap-2"
               >
                 <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
                 <span>Cancel</span>
@@ -198,8 +199,8 @@ function App() {
             )}
             <button
               onClick={handleLogout}
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-              title="Logout"
+              className="p-2 text-[#9CA3AF] hover:text-[#334155] transition-colors"
+              title="Sign Out"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -232,7 +233,7 @@ function App() {
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Panel - PDF Viewer */}
-        <div className="w-1/2 border-r bg-gray-50 overflow-hidden">
+        <div className="w-1/2 border-r border-[#D1D5DB] bg-white overflow-hidden">
           {file ? (
             <PDFViewer
               file={file}
@@ -243,11 +244,11 @@ function App() {
               targetPage={targetPage}
             />
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-gray-400">
+            <div className="h-full flex flex-col items-center justify-center text-[#9CA3AF]">
               <svg className="w-20 h-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              <p className="text-lg font-medium mb-2">Upload a document</p>
+              <p className="text-lg font-medium mb-2 text-[#334155]">Upload a document</p>
               <p className="text-sm">Supported formats: PDF, PNG, JPG, TIFF, BMP</p>
             </div>
           )}
@@ -363,10 +364,10 @@ function App() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-white border-t px-6 py-2 text-xs text-gray-500 flex items-center justify-between">
-        <span>Powered by CompliCheck<span className="text-green-600 font-medium">AI</span>™ from UrbanCompass</span>
+      <footer className="bg-white border-t border-[#D1D5DB] px-6 py-2 text-xs text-[#9CA3AF] flex items-center justify-between">
+        <span>Powered by CompliCheck<span className="text-[#046bd2] font-medium">AI</span> from <a href="https://urbancompasssoftware.com" target="_blank" rel="noopener noreferrer" className="text-[#046bd2] hover:underline">UrbanCompass</a></span>
         {parseResult && (
-          <span>
+          <span className="text-[#334155]">
             {parseResult.chunks.length} components extracted
             {parseResult.metadata.page_count && ` from ${parseResult.metadata.page_count} pages`}
           </span>
