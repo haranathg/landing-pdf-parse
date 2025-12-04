@@ -122,9 +122,9 @@ curl https://xxxxx.ap-southeast-2.awsapprunner.com/health
 5. Select your repo and branch
 6. **App settings:**
    - App name: `landing-pdf-frontend`
-   - **Monorepo:** Check this box and set **Root directory** to `frontend`
+   - **Monorepo:** Check this box (leave Root directory empty - it's set in amplify.yml)
 7. **Build settings:**
-   - Amplify will auto-detect `frontend/amplify.yml`
+   - Amplify will auto-detect `amplify.yml` at repo root
 8. **Environment variables** (expand "Advanced settings" or set after creation):
 
    | Variable | Value |
