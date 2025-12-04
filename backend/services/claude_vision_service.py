@@ -388,5 +388,13 @@ class ClaudeVisionService:
         }
 
 
-# Singleton instance
-claude_vision_service = ClaudeVisionService()
+# Singleton instance - lazy initialization
+_claude_vision_service = None
+
+
+def get_claude_vision_service():
+    """Get or create the Claude vision service singleton."""
+    global _claude_vision_service
+    if _claude_vision_service is None:
+        _claude_vision_service = ClaudeVisionService()
+    return _claude_vision_service

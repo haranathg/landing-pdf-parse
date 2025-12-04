@@ -387,5 +387,13 @@ class GeminiVisionService:
         }
 
 
-# Singleton instance
-gemini_vision_service = GeminiVisionService()
+# Singleton instance - lazy initialization
+_gemini_vision_service = None
+
+
+def get_gemini_vision_service():
+    """Get or create the Gemini vision service singleton."""
+    global _gemini_vision_service
+    if _gemini_vision_service is None:
+        _gemini_vision_service = GeminiVisionService()
+    return _gemini_vision_service

@@ -2,8 +2,8 @@ from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from fastapi.responses import FileResponse
 from typing import Optional
 from services.ade_service import ade_service
-from services.claude_vision_service import claude_vision_service
-from services.gemini_vision_service import gemini_vision_service
+from services.claude_vision_service import get_claude_vision_service
+from services.gemini_vision_service import get_gemini_vision_service
 from services.bedrock_vision_service import get_bedrock_vision_service
 import tempfile
 import os
@@ -54,15 +54,17 @@ async def parse_document(
 
     try:
         if parser == "claude_vision":
+            claude_service = get_claude_vision_service()
             vision_model = model or "claude-sonnet-4-20250514"
-            result = await claude_vision_service.parse_document(
+            result = await claude_service.parse_document(
                 content,
                 file.filename,
                 vision_model
             )
         elif parser == "gemini_vision":
+            gemini_service = get_gemini_vision_service()
             vision_model = model or "gemini-2.0-flash"
-            result = await gemini_vision_service.parse_document(
+            result = await gemini_service.parse_document(
                 content,
                 file.filename,
                 vision_model
